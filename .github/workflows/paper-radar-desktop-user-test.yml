@@ -29,18 +29,26 @@ jobs:
       - name: Start with empty data and click the actual online-search button
         shell: python
         run: |
-          import datetime as dt, json, os, pathlib, sqlite3, subprocess, time, traceback
+          import datetime as dt, hashlib, json, os, pathlib, sqlite3, subprocess, time, traceback
+          import win32con, win32gui, win32process
+          from pywinauto import Desktop
           from pywinauto.application import Application
           root=pathlib.Path.cwd(); out=root/'user_path_verification';out.mkdir(exist_ok=True)
           data=root/'empty-user-data';data.mkdir(exist_ok=True)
           db=data/'radar.sqlite3'
-          # Seed only the source preference, not papers or retrieval results.
           with sqlite3.connect(db) as c:
               c.execute('CREATE TABLE prefs(key TEXT PRIMARY KEY,payload TEXT NOT NULL)')
               c.execute('INSERT INTO prefs VALUES(?,?)',('selected',json.dumps(['aer'])))
           exe=root/'app'/'PaperRadar'/'PaperRadar.exe'
+          archive_hash=hashlib.sha256((root/'PaperRadar_Windows_x64.zip').read_bytes()).hexdigest()
           process=subprocess.Popen([str(exe),'--data-dir',str(data)])
-          checks=[];report={}
+          checks=[];report={};windows=[]
+          def native_windows():
+              found=[]
+              def visit(hwnd,_):
+                  if win32process.GetWindowThreadProcessId(hwnd)[1]==process.pid and win32gui.IsWindowVisible(hwnd):found.append((hwnd,win32gui.GetWindowText(hwnd)))
+              win32gui.EnumWindows(visit,None)
+              return found
           try:
               app=Application(backend='uia').connect(process=process.pid,timeout=40)
               win=app.window(title_re='.*Paper Radar Desktop.*');win.wait('visible',timeout=40)
@@ -53,8 +61,7 @@ jobs:
               while time.monotonic()<stop:
                   if process.poll() is not None:raise RuntimeError('EXE exited during online search: '+str(process.returncode))
                   try:
-                      with sqlite3.connect(db) as c:
-                          row=c.execute('SELECT payload FROM runs ORDER BY id DESC LIMIT 1').fetchone()
+                      with sqlite3.connect(db) as c:row=c.execute('SELECT payload FROM runs ORDER BY id DESC LIMIT 1').fetchone()
                       if row:report=json.loads(row[0]);break
                   except sqlite3.OperationalError:pass
                   time.sleep(2)
@@ -65,14 +72,21 @@ jobs:
               target=next((p for p in papers if p.get('doi')=='10.1257/aer.20231016'),None)
               checks.append({'name':'actual_search_contains_known_AER_paper','passed':bool(target and 'Florida Wetlands' in target['title']),'title':target['title'] if target else ''})
               checks.append({'name':'results_visible_count','passed':report.get('shown',0)>0,'shown':report.get('shown')})
-              time.sleep(2)
-              win.capture_as_image().save(out/'actual_search.png')
-              # Check that the bundled browser opens; do not equate this with CNKI data access.
+              checks.append({'name':'actual_search_matches_public_attention','passed':any(p.get('evidence') for p in papers),'papers_with_evidence':sum(bool(p.get('evidence')) for p in papers)})
+              time.sleep(2);win.capture_as_image().save(out/'actual_search.png')
               win.child_window(title='知网辅助检索 / 采集当前结果',control_type='Button').invoke()
-              browser=app.window(title_re='知网辅助检索.*');browser.wait('visible',timeout=35);time.sleep(3)
-              checks.append({'name':'bundled_CNKI_browser_window_opens','passed':browser.exists(),'scope':'Window/engine only, not an automatic CNKI query or content verification'})
-              browser.capture_as_image().save(out/'cnki_browser_window.png');browser.close()
-              win.close();process.wait(timeout=30)
+              deadline=time.monotonic()+30;browser=None
+              while time.monotonic()<deadline:
+                  windows=native_windows();browser=next((x for x in windows if x[1].startswith('知网辅助检索')),None)
+                  if browser:break
+                  time.sleep(1)
+              checks.append({'name':'bundled_CNKI_browser_window_opens','passed':browser is not None,'scope':'Native window and bundled engine only; does not verify CNKI access or automatic journal retrieval','visible_windows':[x[1] for x in windows]})
+              if browser:
+                  time.sleep(3);Desktop(backend='win32').window(handle=browser[0]).capture_as_image().save(out/'cnki_browser_window.png');win32gui.PostMessage(browser[0],win32con.WM_CLOSE,0,0);time.sleep(1)
+              main_window=next((x for x in native_windows() if 'Paper Radar Desktop' in x[1]),None)
+              if main_window:win32gui.PostMessage(main_window[0],win32con.WM_CLOSE,0,0)
+              else:win.close()
+              process.wait(timeout=30)
               checks.append({'name':'clean_application_exit','passed':process.returncode==0,'code':process.returncode})
           except Exception:
               checks.append({'name':'actual_user_path_error','passed':False,'detail':traceback.format_exc()})
@@ -80,9 +94,8 @@ jobs:
               except Exception:pass
           finally:
               if process.poll() is None:process.terminate()
-              result={'tested_at':dt.datetime.now(dt.timezone.utc).isoformat(),'platform':'Windows Server 2022 x64','release_tag':'paper-radar-desktop-v2.0.0','uses_actual_released_exe':True,'started_without_papers':True,'checks':checks,'search_report':report,'passed':sum(x['passed'] for x in checks),'total':len(checks)}
-              (out/'actual_exe_network_test.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
-              print(json.dumps(result,ensure_ascii=True,indent=2))
+              result={'tested_at':dt.datetime.now(dt.timezone.utc).isoformat(),'platform':'Windows Server 2022 x64','release_tag':'paper-radar-desktop-v2.0.0','release_zip_sha256':archive_hash,'uses_actual_released_exe':True,'started_without_papers':True,'checks':checks,'search_report':report,'passed':sum(x['passed'] for x in checks),'total':len(checks)}
+              (out/'actual_exe_network_test.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8');print(json.dumps(result,ensure_ascii=True,indent=2))
           if any(not c['passed'] for c in checks):raise SystemExit(2)
       - uses: actions/upload-artifact@v4
         if: always()
