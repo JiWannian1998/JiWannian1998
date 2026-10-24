@@ -1,0 +1,108 @@
+{
+  "checked_at": "2026-10-24T11:30:17.355863+00:00",
+  "checks": [
+    {
+      "name": "journal_min",
+      "url": "https://api.crossref.org/journals/0002-8282/works?rows=2",
+      "status": 200,
+      "final_url": "https://api.crossref.org/journals/0002-8282/works?rows=2",
+      "total": 5677,
+      "titles": [
+        {
+          "doi": "10.1257/aer.103.3.713",
+          "title": [
+            "<i>Journal of Economic Literature</i>"
+          ]
+        },
+        {
+          "doi": "10.1257/aer.20151372",
+          "title": [
+            "The Bidder's Curse: Reply"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "journal_filter",
+      "url": "https://api.crossref.org/journals/0002-8282/works?rows=2&filter=from-pub-date%3A2025-10-24%2Cuntil-pub-date%3A2026-10-24%2Ctype%3Ajournal-article",
+      "status": 200,
+      "final_url": "https://api.crossref.org/journals/0002-8282/works?rows=2&filter=from-pub-date%3A2025-10-24%2Cuntil-pub-date%3A2026-10-24%2Ctype%3Ajournal-article",
+      "total": 140,
+      "titles": [
+        {
+          "doi": "10.1257/aer.20240636",
+          "title": [
+            "Negative Control Falsification Tests for Instrumental Variable Designs"
+          ]
+        },
+        {
+          "doi": "10.1257/aer.20231107",
+          "title": [
+            "The Gender Pay Gap: Micro Sources and Macro Consequences"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "journal_cursor",
+      "url": "https://api.crossref.org/journals/0002-8282/works?rows=2&filter=from-pub-date%3A2025-10-24%2Cuntil-pub-date%3A2026-10-24%2Ctype%3Ajournal-article&cursor=%2A&sort=published&order=desc",
+      "status": 400,
+      "body_excerpt": "{\"status\":\"failed\",\"message-type\":\"validation-failure\",\"message\":[{\"type\":\"sort-criteria-incompatible-with-cursor\",\"value\":\"sort\",\"message\":\"Sorting by [issued, published, published-print, published-online] is not supported when using a cursor\"}]}"
+    },
+    {
+      "name": "works_filter",
+      "url": "https://api.crossref.org/works?rows=2&filter=issn%3A0002-8282%2Cfrom-pub-date%3A2025-10-24%2Cuntil-pub-date%3A2026-10-24",
+      "status": 200,
+      "final_url": "https://api.crossref.org/works?rows=2&filter=issn%3A0002-8282%2Cfrom-pub-date%3A2025-10-24%2Cuntil-pub-date%3A2026-10-24",
+      "total": 140,
+      "titles": [
+        {
+          "doi": "10.1257/aer.20240636",
+          "title": [
+            "Negative Control Falsification Tests for Instrumental Variable Designs"
+          ]
+        },
+        {
+          "doi": "10.1257/aer.20231107",
+          "title": [
+            "The Gender Pay Gap: Micro Sources and Macro Consequences"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "nber_min",
+      "url": "https://api.crossref.org/prefixes/10.3386/works?rows=2",
+      "status": 200,
+      "final_url": "https://api.crossref.org/prefixes/10.3386/works?rows=2",
+      "total": 36396,
+      "titles": [
+        {
+          "doi": "10.3386/t0047",
+          "title": [
+            "Technical Progress in U.S. Manufacturing Sectors, 1948-1973:  An Application of Lie Groups"
+          ]
+        },
+        {
+          "doi": "10.3386/t0128",
+          "title": [
+            "A Utility Based Comparison of Some Models of Exchange Rate Volatility"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "nber_digest",
+      "url": "https://www.nber.org/digest",
+      "status": 200,
+      "final_url": "https://www.nber.org/digest",
+      "body_excerpt": "<!DOCTYPE html>\n<html lang=\"en\" dir=\"ltr\" prefix=\"og: https://ogp.me/ns#\">\n  <head>\n    <script src=\"/modules/custom/nber_user_auth/js/cookies.js?tne79g\"></script>\n<meta charset=\"utf-8\" />\n<style>/* @see https://github.com/aFarkas/lazysizes#broken-image-symbol */.js img.lazyload:not([src]) { visibility: hidden; }/* @see https://github.com/aFarkas/lazysizes#automatically-setting-the-sizes-attribute */.js img.lazyloaded[data-sizes=auto] { display: block; width: 100%; }</style>\n<link rel=\"canonical\" href=\"https://www.nber.org/digest\" />\n<meta property=\"og:site_name\" content=\"NBER\" />\n<meta property=\"og:url\" content=\"https://www.nber.org/digest\" />\n<meta property=\"og:title\" content=\"The Digest\" />\n<meta property=\"og:image\" content=\"https://www.nber.org/sites/default/files/2022-06/NBER-FB-Share-Tile-1200.jpg\" />\n<meta name=\"Generator\" content=\"Drupal 10 (https://www.drupal.org)\" />\n<meta name=\"MobileOptimized\" content=\"width\" />\n<meta name=\"HandheldFriendly\" content=\"true\" />\n<meta name=\"vi"
+    },
+    {
+      "name": "nber_digest_archive",
+      "url": "https://www.nber.org/digest/202610",
+      "status": 404,
+      "body_excerpt": "<!DOCTYPE html>\n<html lang=\"en\">\n<!-- THIS IS web3/styleformat/top.html -->\n\n<!-- BEGIN PARTIAL FILE scraped_head_inner -->\n\n  <meta charset=\"utf-8\" />\n  <style>/* @see https://github.com/aFarkas/lazysizes#broken-image-symbol */.js img.lazyload:not([src]) { visibility: hidden; }/* @see https://github.com/aFarkas/lazysizes#automatically-setting-the-sizes-attribute */.js img.lazyloaded[data-sizes=auto] { display: block; width: 100%; }</style>\n  <meta content=\"https://www.nber.org/sites/default/files/2022-06/NBER-FB-Share-Tile-1200.jpg\" property=\"og:image\" />\n  <meta content=\"width\" name=\"MobileOptimized\" />\n  <meta content=\"true\" name=\"HandheldFriendly\" />\n  <meta content=\"width=device-width, initial-scale=1.0\" name=\"viewport\" /> <!-- Fonts and jQuery preloading --> \n<!-- END PARTIAL FILE scraped_head_inner -->\n\n<!-- BEGIN PARTIAL FILE head_inner -->\n<title>Page Not Found - MyNBER</title>\n<meta name=\"robots\" content=\"noindex, nofollow\">\n<link rel=\"stylesheet\" href=\"/vendor/node_modules/@fortawesome/fontawesome-free/css/all.css\">\n<link rel=\"stylesheet\" href=\"/vendor/node_modules/bootstrap/dist/css/bootstrap.min.css\">\n<link rel=\"stylesheet\" href=\"/vendor/node_modules/alertifyjs/build/css/alertify.min.css\">\n<link rel=\"stylesheet\" href=\"/css/dist/global.css\">\n<link rel=\"stylesheet\" href=\"/assets/build/css/header-footer-generated.css\">\n\n<link rel=\"icon\" href=\"/img/favicon.ico\" sizes=\"any\">\n\n\n<!-- Start cookieyes banner -->\n<script id=\"cookieyes\" type=\"text/javascript\" src=\"https://cdn-cookieyes.com/client_data/4be9d1df3458f9e3d6b941723847f77e/script.js\">\n</script>\n<!-- End cookieyes banner -->\n\n<!-- LOAD JAVASCRIPT WITH defer -->\n\n<script defer src=\"/assets/build/js/header-footer-libraries-generated.js\"></script>\n<script defer src=\"/assets/build/js/header-footer-generated.js\"></script>\n\n\n<div id=\"terms-accept-modal\" class=\"modal fade\" data-bs-backdrop=\"static\" data-bs-keyboard=\"false\" tabindex=\"-1\" aria-labelledby=\"terms-accept-modal-label\" aria-hidden=\"true\">\n  <div class=\"modal-dialog modal-dialog-centered modal-lg\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h4 class=\"modal-title\" id=\"terms-accept-modal-label\">Accept NBER Terms &amp; Conditions</h4>\n      </div>\n      <div class=\"modal-body clearfix\">\n        <p class=\"mb-3\">Please review and accept the <a href=\"https://www.nber.org/terms-and-conditions\" target=\"_blank\">NBER Terms &amp; Conditions</a> before using this website.</p>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-success bs-style\">Accept</button>\n      </div>\n    </div>\n  </div>\n</div>\n\n<script defer src=\"/vendor/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js\"></script>\n\n\n\n<!-- END PARTIAL FILE head_inner -->\n\n<!-- begin head_content passed in to NBER::Style as a context variable -->\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n\n<!-- end head_content -->\n<script defer src=\"/js/dist/global-alt.min.js\"></script>\n\n</head>\n<body>\n\n<!-- BEGIN PARTIAL FILE scraped_body_top_inner -->\n<body class=\"page-body\">\n        <a href=\"#main-content\" class=\"visually-hidden focusable\">\n      Skip to main content\n    </a>\n    <noscript><iframe src=\"https://www.googletagmanager.com/ns.html?id=GTM-MVRPF7C\" height=\"0\" width=\"0\" style=\"display:none;visibility:hidden\"></iframe></noscript><div data-sitewide-alert aria-live=\"polite\"></div>\n\n      <div class=\"dialog-off-canvas-main-canvas\" data-off-canvas-main-canvas>\n    <header class=\"header\">\n  "
+    }
+  ]
+}
