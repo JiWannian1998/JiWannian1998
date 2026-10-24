@@ -121,7 +121,7 @@ def parse_crossref(x,src):
     if val:dates.append({'date':val,'kind':'登记发表日期'})
  chosen=min(dates,key=lambda z:(interval(z['date'])[0],-len(z['date']))) if dates else {'date':'','kind':'日期缺失'}
  abst=text(x.get('abstract',''));authors=[text(' '.join([a.get('given',''),a.get('family','')])) or a.get('name','') for a in x.get('author',[])]
- return {'id':d,'doi':d,'title':title,'authors':authors,'source_id':src['id'],'source':src['name'],'date':chosen['date'],'date_kind':chosen['kind'],'dates':dates,'abstract':abst,'methods':methods(title,abst),'url':'https://www.nber.org/papers/'+d.split('/')[-1] if src['id']=='nber' else 'https://doi.org/'+d,'metadata_url':'https://api.crossref.org/works/'+quote(d,safe='/'),'provider':'Crossref公开元数据','citations':x.get('is-referenced-by-count'),'evidence':[],'candidates':[],'observed_at':stamp(),'type':'工作论文（未经期刊同行评审）' if src['id']=='nber' else '期刊论文'}
+ return {'id':d,'doi':d,'title':title,'authors':authors,'source_id':src['id'],'source':src['name'],'date':chosen['date'],'date_kind':chosen['kind'],'dates':dates,'abstract':abst,'methods':methods(title,abst),'url':'https://www.nber.org/papers/'+d.split('/')[-1] if src['id']=='nber' else 'https://doi.org/'+d,'metadata_url':'https://api.crossref.org/works/'+quote(d,safe='/'),'provider':'Crossref公开元数据','citations':x.get('is-referenced-by-count'),'evidence':[],'candidates':[],'observed_at':stamp(),'type':'工作论文版本' if src['id']=='nber' else '期刊论文'}
 class Store:
  def __init__(self,root=None):
   self.root=Path(root or os.getenv('PAPERRADAR_DATA') or (Path(os.getenv('LOCALAPPDATA') or Path.home())/'PaperRadar'));self.root.mkdir(parents=True,exist_ok=True);self.path=self.root/'radar.sqlite3'
@@ -210,7 +210,7 @@ class Client:
    except Cancelled:raise
    except (requests.RequestException,SourceError) as e:
     err=str(e)
-    if 'HTTP 403' in err or 'HTTP 401' in err:break
+    if 'HTTP 403' in err or 'HTTP 401' in err or 'HTTP 400' in err:break
     if i+1<attempts and self.cancel.wait(i+1):self.check()
   raise SourceError((err or '连接失败')[:350])
  def json(self,url,params=None):
@@ -221,7 +221,9 @@ def crossref(client,src,start,end,progress=lambda s:None,max_pages=15):
  identifiers=[src.get('issn')]+src.get('extra_issns',[]);papers={};reports=[]
  for identifier in identifiers:
   url='https://api.crossref.org/prefixes/10.3386/works' if src['id']=='nber' else 'https://api.crossref.org/journals/'+identifier+'/works'
-  params={'filter':f'from-pub-date:{start},until-pub-date:{end}','rows':200,'cursor':'*','sort':'published','order':'desc'}
+  # Crossref rejects publication-date sorting with cursor pagination.
+  # Filter remotely, page without sort/order, then sort the normalized records locally.
+  params={'filter':f'from-pub-date:{start},until-pub-date:{end}','rows':200,'cursor':'*'}
   if src['id']!='nber':params['filter']+=',type:journal-article'
   raw=0;total=None;done=False;error='';seen=set()
   try:
@@ -229,14 +231,17 @@ def crossref(client,src,start,end,progress=lambda s:None,max_pages=15):
     client.check();data,obj=client.json(url,params);msg=data.get('message',{});items=msg.get('items')
     if not isinstance(items,list):raise SourceError('Crossref响应结构不匹配')
     total=msg.get('total-results');raw+=len(items)
+    fingerprint=tuple(x.get('DOI') for x in items)
+    if items and fingerprint in seen:raise SourceError('分页返回重复记录，未宣称完整覆盖')
+    seen.add(fingerprint)
     for x in items:
      p=parse_crossref(x,src)
      if p and in_window(p['date'],start,end,True):p['observed_at']=obj['fetched_at'];papers[p['id']]=p
     progress(f"{src['short']}：已读取 {raw} 条登记记录，研究论文 {len(papers)} 篇")
-    if not items or (isinstance(total,int) and raw>=total):done=True;break
-    cursor=msg.get('next-cursor');fingerprint=tuple(x.get('DOI') for x in items)
-    if not cursor or fingerprint in seen:raise SourceError('分页返回重复记录，未宣称完整覆盖')
-    seen.add(fingerprint);params['cursor']=cursor
+    if len(items)<params['rows'] or (isinstance(total,int) and raw>=total):done=True;break
+    cursor=msg.get('next-cursor')
+    if not cursor:raise SourceError('分页缺少下一游标，覆盖不完整')
+    params['cursor']=cursor
   except Cancelled:raise
   except Exception as e:error=str(e)[:350]
   reports.append({'source_id':src['id'],'source':src['name'],'provider':'Crossref','url':url,'retrieved':len(papers),'scanned':raw,'index_total':total,'status':'ok' if done else 'partial' if papers else 'error','complete_index':done,'note':error or ('该查询索引已读完；不等于期刊全部内容' if done else '达到分页上限，覆盖不完整'),'checked_at':stamp()})
@@ -308,21 +313,22 @@ def evidence_page(body,url,source):
  return ids,{'title':title,'url':url,'date':d,'date_kind':kind,'source':source,'kind':'研究专题介绍' if len(ids)<=2 else '文章中的文献链接（非独立专题）','match':'网页明确链接原论文DOI或NBER编号','verified':bool(ids and d and title),'checked_at':stamp()}
 def collect_evidence(client,papers,start,end,progress=lambda s:None,budget=100):
  bydoi={p['doi']:p for p in papers if p.get('doi')};targets=set();errors=[];scanned=0;matched=0
- roots=[('AEA研究精选','https://www.aeaweb.org/research'),('NBER Digest','https://www.nber.org/digest')]
- for name,root in roots:
+ queue=[('AEA研究精选','https://www.aeaweb.org/research'),('NBER Digest','https://www.nber.org/digest')];seen=set()
+ while queue and len(seen)<14:
+  name,root=queue.pop(0)
+  if root in seen:continue
+  seen.add(root)
   try:
    obj=client.get(root);soup=BeautifulSoup(obj['text'],'html.parser')
    for a in soup.select('a[href]'):
-    u=urljoin(obj['url'],a['href']).split('#')[0]
-    if re.match(r'https://(?:www\.)?aeaweb\.org/research/[\w-]+$',u) and not re.search(r'/(about|archive|contact)$',u):targets.add((name,u))
-    if re.match(r'https://(?:www\d?\.)?nber\.org/digest/\d{6}/[^/?]+$',u):targets.add((name,u))
-   archives=[]
-   if name=='NBER Digest':archives=[urljoin(obj['url'],a['href']) for a in soup.select('a[href]') if re.fullmatch(r'(?:https://[^/]+)?/digest/\d{6}/?',a['href'])]
-   for u in list(dict.fromkeys(archives))[:4]:
-    ao=client.get(u);ss=BeautifulSoup(ao['text'],'html.parser')
-    for a in ss.select('a[href]'):
-     v=urljoin(ao['url'],a['href']).split('#')[0]
-     if re.match(r'https://(?:www\d?\.)?nber\.org/digest/\d{6}/[^/?]+$',v):targets.add((name,v))
+    u=urljoin(obj['url'],a['href']).split('#')[0];parts=urlparse(u)
+    if parts.scheme!='https':continue
+    if parts.hostname in ('www.aeaweb.org','aeaweb.org'):
+     if re.fullmatch(r'/research/[\w-]+',parts.path) and parts.path not in ('/research/about','/research/archive','/research/contact'):targets.add((name,u))
+     elif parts.path in ('/research','/research/archive') and u not in seen:queue.append((name,u))
+    elif re.fullmatch(r'(?:www\d?\.)?nber\.org',parts.hostname or ''):
+     if re.fullmatch(r'/digest/\d{6}/[^/]+',parts.path):targets.add((name,u))
+     elif parts.path.startswith('/digest') and not re.search(r'\.pdf$|subscribe|download',u,re.I) and u not in seen:queue.append((name,u))
   except Cancelled:raise
   except Exception as e:errors.append(name+': '+str(e)[:220])
  def visit(item):
