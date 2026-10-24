@@ -1,4 +1,4 @@
-"""Paper Radar Desktop: public metadata, dated evidence and local SQLite storage.
+"""Paper Radar Desktop: free public metadata, dated evidence, local SQLite.
 No API keys, logins, LLM calls, subscription services or fabricated popularity scores.
 """
 from __future__ import annotations
@@ -221,8 +221,7 @@ def crossref(client,src,start,end,progress=lambda s:None,max_pages=15):
  identifiers=[src.get('issn')]+src.get('extra_issns',[]);papers={};reports=[]
  for identifier in identifiers:
   url='https://api.crossref.org/prefixes/10.3386/works' if src['id']=='nber' else 'https://api.crossref.org/journals/'+identifier+'/works'
-  # Crossref rejects publication-date sorting with cursor pagination.
-  # Filter remotely, page without sort/order, then sort the normalized records locally.
+  # Cursor pagination must not be combined with publication-date sorting.
   params={'filter':f'from-pub-date:{start},until-pub-date:{end}','rows':200,'cursor':'*'}
   if src['id']!='nber':params['filter']+=',type:journal-article'
   raw=0;total=None;done=False;error='';seen=set()
@@ -311,8 +310,18 @@ def evidence_page(body,url,source):
   if m:d=m[1]+'-'+m[2];kind='Digest期号，月精度'
  title=text(soup.h1) if soup.h1 else (meta(soup,'og:title') or [''])[0]
  return ids,{'title':title,'url':url,'date':d,'date_kind':kind,'source':source,'kind':'研究专题介绍' if len(ids)<=2 else '文章中的文献链接（非独立专题）','match':'网页明确链接原论文DOI或NBER编号','verified':bool(ids and d and title),'checked_at':stamp()}
+def evidence_sample(targets,budget):
+ buckets={}
+ for name,url in sorted(targets,reverse=True):buckets.setdefault(name,[]).append((name,url))
+ selected=[]
+ # Round-robin by provider: large NBER archive must not consume the AEA budget.
+ for i in range(max((len(x) for x in buckets.values()),default=0)):
+  for name in sorted(buckets):
+   if i<len(buckets[name]):selected.append(buckets[name][i])
+   if len(selected)>=budget:return selected
+ return selected
 def collect_evidence(client,papers,start,end,progress=lambda s:None,budget=100):
- bydoi={p['doi']:p for p in papers if p.get('doi')};targets=set();errors=[];scanned=0;matched=0
+ bydoi={p['doi']:p for p in papers if p.get('doi')};targets=set();errors=[];scanned=0;matched=0;inspected=[]
  queue=[('AEA研究精选','https://www.aeaweb.org/research'),('NBER Digest','https://www.nber.org/digest')];seen=set()
  while queue and len(seen)<14:
   name,root=queue.pop(0)
@@ -337,18 +346,20 @@ def collect_evidence(client,papers,start,end,progress=lambda s:None,budget=100):
    obj=client.get(u);ids,ev=evidence_page(obj['text'],obj['url'],name);return ids,ev,''
   except Cancelled:raise
   except Exception as e:return set(),None,str(e)[:100]
- selected=sorted(targets,key=lambda x:x[1],reverse=True)[:budget]
+ selected=evidence_sample(targets,budget)
  with cf.ThreadPoolExecutor(max_workers=3) as pool:
   for ids,ev,err in pool.map(visit,selected):
    client.check();scanned+=1
    if err:errors.append(err)
+   if ev:
+    inspected.append({'url':ev['url'],'title':ev['title'],'date':ev['date'],'linked_dois':sorted(ids),'verified':ev['verified']})
    if ev and ev['verified']:
     for d in ids:
      if d in bydoi:
       p=bydoi[d]
       if not any(x['url']==ev['url'] for x in p['evidence']):p['evidence'].append(ev);matched+=1
    if scanned%8==0:progress(f'关注证据：核对 {scanned}/{len(selected)} 个网页，关联 {matched} 条')
- return {'source_id':'attention','source':'公开关注证据','status':'partial','retrieved':matched,'scanned':scanned,'note':'AEA / NBER有限栏目；不是全网热度。未匹配不等于无人关注。 '+'; '.join(dict.fromkeys(errors))[:400],'checked_at':stamp()}
+ return {'source_id':'attention','source':'公开关注证据','status':'partial','retrieved':matched,'scanned':scanned,'inspected_pages':inspected,'note':'AEA / NBER有限栏目；不是全网热度。未匹配不等于无人关注。 '+'; '.join(dict.fromkeys(errors))[:400],'checked_at':stamp()}
 def dedup(papers):
  result={}
  for p in papers:
