@@ -1,0 +1,49 @@
+name: Paper Radar Windows source probe
+on:
+  push:
+    paths: ['.github/workflows/paper-radar-desktop-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: windows-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install requests beautifulsoup4
+      - name: Check live sources and print readable report
+        shell: python
+        run: |
+          import concurrent.futures as cf, datetime as dt, json, pathlib, re, requests
+          from bs4 import BeautifulSoup
+          end=dt.date.today(); start=end-dt.timedelta(days=365)
+          tests=[('AER','https://api.crossref.org/journals/0002-8282/works'),('QJE','https://api.crossref.org/journals/0033-5533/works'),('JPE','https://api.crossref.org/journals/0022-3808/works'),('Econometrica print','https://api.crossref.org/journals/0012-9682/works'),('Econometrica online','https://api.crossref.org/journals/1468-0262/works'),('ReStud','https://api.crossref.org/journals/0034-6527/works'),('NBER','https://api.crossref.org/prefixes/10.3386/works'),('NBER Digest','https://www.nber.org/digest'),('AEA','https://www.aeaweb.org/research'),('CNKI ERJ','https://jjyj.cbpt.cnki.net/'),('CNKI MW','https://glsj.cbpt.cnki.net/'),('CNKI WEP','https://sjjz.cbpt.cnki.net/'),('CNKI public','https://kns.cnki.net/kns8s/AdvSearch'),('World Economy','https://sjjj.magtech.com.cn/CN/current'),('Economic Geography CN','https://www.jjdl.com.cn/CN/current'),('Sociology CN','https://shxyj.ajcass.com/'),('JQTE','https://www.jqte.net/sljjjsjjyj/ch/index.aspx'),('CIE','https://www.ciejournal.org/'),('CEQ','https://ccj.pku.edu.cn/journal/Info?jid=96822')]
+          def check(item):
+              name,url=item; result={'source':name,'url':url}
+              try:
+                  params={'filter':f'from-pub-date:{start},until-pub-date:{end}','rows':3,'sort':'published','order':'desc'} if 'api.crossref.org' in url else None
+                  r=requests.get(url,params=params,headers={'User-Agent':'PaperRadar/2.0 (personal research; public metadata)'},timeout=(12,35));result.update(status=r.status_code,final_url=r.url,bytes=len(r.content))
+                  r.encoding=r.apparent_encoding or 'utf-8'
+                  if 'api.crossref.org' in url:
+                      if r.ok:
+                          data=r.json()['message'];result.update(total=data.get('total-results'),items=[{'doi':x.get('DOI'),'title':x.get('title'),'issn':x.get('ISSN'),'date':x.get('published')} for x in data.get('items',[])])
+                      else:result['body']=r.text[:900]
+                  else:
+                      soup=BeautifulSoup(r.text,'html.parser');result['title']=soup.title.get_text(' ',strip=True) if soup.title else '';result['text']=soup.get_text(' ',strip=True)[:1200]
+                      if len(r.content)<1500:result['html']=r.text
+                      result['links']=[{'text':a.get_text(' ',strip=True)[:80],'href':a.get('href')} for a in soup.select('a[href]') if len(a.get_text(strip=True))>12][:18]
+              except Exception as e:result['error']=str(e)[:350]
+              return result
+          with cf.ThreadPoolExecutor(max_workers=4) as pool: results=list(pool.map(check,tests))
+          report={'checked_at':dt.datetime.now(dt.timezone.utc).isoformat(),'os':'Windows GitHub standard runner','results':results}
+          pathlib.Path('desktop-probe.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(report,ensure_ascii=True,indent=2))
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paper-radar-windows-source-probe
+          path: desktop-probe.json
+          retention-days: 2
