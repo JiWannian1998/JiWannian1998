@@ -1,0 +1,49 @@
+name: Paper Radar GUI diagnostic
+on:
+  push:
+    paths: ['.github/workflows/paper-radar-gui-diagnose.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  diagnose:
+    runs-on: windows-2022
+    timeout-minutes: 8
+    env:
+      PYTHONUTF8: '1'
+      QTWEBENGINE_CHROMIUM_FLAGS: '--disable-gpu'
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install PySide6 requests beautifulsoup4 pillow
+      - shell: pwsh
+        run: gh run download 40094405397 --repo $env:GITHUB_REPOSITORY --name PaperRadar-Windows-x64-and-verification --dir sample
+      - name: Capture Python stack, native screenshot and startup errors
+        shell: python
+        run: |
+          import json,os,pathlib,subprocess,sys,time
+          from PIL import ImageGrab
+          root=pathlib.Path.cwd();src=root/'paper-radar-desktop';out=root/'gui_diagnostic';out.mkdir(exist_ok=True);data=out/'data';data.mkdir(exist_ok=True)
+          catalog=json.loads((root/'paper-radar/catalog.json').read_text(encoding='utf-8'))
+          for s in catalog:s['language']=s.get('language',s.get('lang','en'))
+          (src/'catalog.json').write_text(json.dumps(catalog,ensure_ascii=False),encoding='utf-8')
+          launcher=out/'launch.py'
+          launcher.write_text('import sys,faulthandler,runpy\nfaulthandler.enable()\nfaulthandler.dump_traceback_later(35,repeat=True)\nsys.path.insert(0,'+repr(str(src))+')\nsys.argv='+repr(['main.py','--self-test','--test-records',str(root/'sample/verification/live_records.json'),'--report-dir',str(out/'selftest'),'--data-dir',str(data)])+'\nrunpy.run_path('+repr(str(src/'main.py'))+',run_name="__main__")\n',encoding='utf-8')
+          with (out/'stdout.txt').open('w',encoding='utf-8') as log:
+              p=subprocess.Popen([sys.executable,str(launcher)],cwd=src,stdout=log,stderr=subprocess.STDOUT)
+              try:
+                  p.wait(timeout=85)
+              except subprocess.TimeoutExpired:
+                  ImageGrab.grab().save(out/'timeout.png');p.terminate();p.wait(timeout=20)
+              ImageGrab.grab().save(out/'final.png')
+          print((out/'stdout.txt').read_text(encoding='utf-8'))
+          for x in data.glob('*error*'):print(x.read_text(encoding='utf-8'))
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: paper-radar-gui-diagnostic
+          path: gui_diagnostic/
+          retention-days: 2
