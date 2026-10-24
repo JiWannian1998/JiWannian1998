@@ -22,11 +22,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Prepare reproducible source tree and install open-source dependencies
+      - name: Normalize catalog for desktop application
+        shell: python
+        run: |
+          import json,pathlib
+          data=json.loads(pathlib.Path('paper-radar/catalog.json').read_text(encoding='utf-8'))
+          for item in data:
+              item['language']=item.get('language',item.get('lang','en'))
+          pathlib.Path('paper-radar-desktop/catalog.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
+      - name: Install open-source dependencies
+        working-directory: paper-radar-desktop
         shell: pwsh
         run: |
-          Copy-Item paper-radar/catalog.json paper-radar-desktop/catalog.json
-          Set-Location paper-radar-desktop
           New-Item -ItemType Directory -Force verification | Out-Null
           @'
           PySide6>=6.8,<7
@@ -75,6 +82,8 @@ jobs:
           import hashlib, importlib.metadata as md, json, pathlib, shutil, sys, zipfile
           root=pathlib.Path.cwd(); out=root/'dist'/'PaperRadar'
           (out/'licenses').mkdir(exist_ok=True)
+          python_license=pathlib.Path(sys.base_prefix)/'LICENSE.txt'
+          if python_license.exists():shutil.copy2(python_license,out/'licenses'/'Python-LICENSE.txt')
           for package in ['PySide6','PySide6_Essentials','PySide6_Addons','shiboken6','requests','beautifulsoup4','certifi','urllib3','charset-normalizer','idna','pyinstaller']:
               try:
                   dist=md.distribution(package)
@@ -85,7 +94,6 @@ jobs:
                               target=out/'licenses'/package/pathlib.Path(str(f)).name
                               target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(p,target)
               except md.PackageNotFoundError: pass
-          # Never redistribute host/container font files; application uses installed Windows fonts.
           for p in out.rglob('*'):
               if p.is_file() and p.suffix.lower() in ('.ttf','.otf','.woff','.woff2'):p.unlink()
           notice='Original Paper Radar application code: MIT License. Copyright 2026 Paper Radar contributors.\nPermission is granted, free of charge, to use, copy, modify, distribute and sublicense this code with this notice. THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY.\nThird-party components retain their licenses. Python: PSF; PySide6/Qt: LGPLv3/GPLv3 and component notices; Requests: Apache-2.0; Beautiful Soup: MIT; PyInstaller: GPL with bootloader exception; SQLite: public domain.\nQt libraries are dynamically packaged and may be replaced with compatible modified versions. Full application source accompanies this release. See licenses/ and installed_packages.txt for third-party details.\nhttps://doc.qt.io/qtforpython-6/licenses.html\nhttps://doc.qt.io/qt-6/licensing.html\n'
