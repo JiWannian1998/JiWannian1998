@@ -1,0 +1,53 @@
+name: Paper Radar public-source verification
+on:
+  push:
+    paths:
+      - '.github/workflows/paper-radar-network.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify real bibliographic content
+        run: |
+          python - <<'PY'
+          import json, urllib.request, concurrent.futures, pathlib, datetime, re
+          endpoints = [
+            ('Crossref AER', 'https://api.crossref.org/works/10.1257/aer.20231016', 'Conservation Priorities'),
+            ('NBER', 'https://www.nber.org/papers/w35514', '35514'),
+            ('CNKI Economic Research', 'https://jjyj.cbpt.cnki.net/', '经济研究'),
+            ('CNKI Management World', 'https://glsj.cbpt.cnki.net/', '管理世界'),
+            ('CNKI World Economy Politics', 'https://sjjz.cbpt.cnki.net/', '世界经济与政治'),
+            ('World Economy', 'https://sjjj.magtech.com.cn/CN/current', '世界经济'),
+            ('CNKI search', 'https://kns.cnki.net/kns8s/AdvSearch', '知网'),
+          ]
+          def test(item):
+            name, url, needle = item
+            try:
+              req=urllib.request.Request(url,headers={'User-Agent':'PaperRadar/1.0 (public bibliographic verification)'})
+              with urllib.request.urlopen(req,timeout=25) as r:
+                raw=r.read(6000000); charset=r.headers.get_content_charset() or 'utf-8'
+                text=raw.decode(charset,errors='replace')
+                if needle not in text and 'charset=gb' in text.lower(): text=raw.decode('gb18030',errors='replace')
+                out={'source':name,'url':url,'status':r.status,'content_verified':needle.lower() in text.lower(),'bytes':len(raw),'snippet':re.sub('<[^>]+>',' ',text)[:1500]}
+                if 'api.crossref.org' in url:
+                  obj=json.loads(text).get('message',{}); out['doi']=obj.get('DOI');out['title']=obj.get('title');out['content_verified']=obj.get('DOI','').lower()=='10.1257/aer.20231016' and any(needle in s for s in obj.get('title',[]))
+                return out
+            except Exception as e:return {'source':name,'url':url,'content_verified':False,'error':str(e)}
+          with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool: checks=list(pool.map(test,endpoints))
+          report={'checked_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'environment':'GitHub-hosted ubuntu-latest','passed':sum(x['content_verified'] for x in checks),'total':len(checks),'checks':checks}
+          path=pathlib.Path('paper-radar/network-report.json');path.parent.mkdir(exist_ok=True);path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - name: Save verification result
+        run: |
+          git config user.name 'Paper Radar verification'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add paper-radar/network-report.json
+          git diff --cached --quiet || git commit -m 'Record actual hosted network verification [skip ci]'
+          git pull --rebase
+          git push
