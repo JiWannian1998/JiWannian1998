@@ -1,0 +1,133 @@
+{
+  "tested_at": "2026-10-24T11:22:03.469116+00:00",
+  "uses_real_collected_records": true,
+  "passed": 22,
+  "total": 25,
+  "checks": [
+    {
+      "name": "real_index_nonempty",
+      "passed": true,
+      "detail": "24"
+    },
+    {
+      "name": "catalog_has_36_sources",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no_future_publication_dates",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "known_AER_DOI_and_title",
+      "passed": false,
+      "detail": ""
+    },
+    {
+      "name": "NBER_only_working_paper_DOIs",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "source_identifiers_present",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no_unknown_publication_dates",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "browser_loads_real_records",
+      "passed": false,
+      "detail": ""
+    },
+    {
+      "name": "all_source_checkboxes_present",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "default_results_only_top5_NBER",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "seven_day_boundary",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "thirty_day_boundary",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "half_year_boundary",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "year_only_excluded_by_default",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CSV_formula_injection_protected",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "exact_paper_keyword_search",
+      "passed": false,
+      "detail": ""
+    },
+    {
+      "name": "seven_day_results_obey_filter",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "evidence_only_filter",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Chinese_selection_is_strict",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CNKI_guide_and_import_available",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "coverage_report_available",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "usage_tutorial_available",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CNKI_Refworks_parse_of_real_record",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile_no_horizontal_overflow",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no_browser_runtime_errors",
+      "passed": true,
+      "detail": ""
+    }
+  ]
+}
