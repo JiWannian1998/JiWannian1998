@@ -1,0 +1,92 @@
+name: Paper Radar Desktop real user path
+on:
+  workflow_run:
+    workflows: ['Paper Radar Desktop Windows release']
+    types: [completed]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  user-path:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: windows-2022
+    timeout-minutes: 15
+    env:
+      PYTHONUTF8: '1'
+      QTWEBENGINE_CHROMIUM_FLAGS: '--disable-gpu'
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download the actual released EXE
+        shell: pwsh
+        run: |
+          gh release download paper-radar-desktop-v2.0.0 --repo $env:GITHUB_REPOSITORY --pattern PaperRadar_Windows_x64.zip
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Expand-Archive PaperRadar_Windows_x64.zip -DestinationPath app
+          python -m pip install pywinauto pillow
+      - name: Start with empty data and click the actual online-search button
+        shell: python
+        run: |
+          import datetime as dt, json, os, pathlib, sqlite3, subprocess, time, traceback
+          from pywinauto.application import Application
+          root=pathlib.Path.cwd(); out=root/'user_path_verification';out.mkdir(exist_ok=True)
+          data=root/'empty-user-data';data.mkdir(exist_ok=True)
+          db=data/'radar.sqlite3'
+          # Seed only the source preference, not papers or retrieval results.
+          with sqlite3.connect(db) as c:
+              c.execute('CREATE TABLE prefs(key TEXT PRIMARY KEY,payload TEXT NOT NULL)')
+              c.execute('INSERT INTO prefs VALUES(?,?)',('selected',json.dumps(['aer'])))
+          exe=root/'app'/'PaperRadar'/'PaperRadar.exe'
+          process=subprocess.Popen([str(exe),'--data-dir',str(data)])
+          checks=[];report={}
+          try:
+              app=Application(backend='uia').connect(process=process.pid,timeout=40)
+              win=app.window(title_re='.*Paper Radar Desktop.*');win.wait('visible',timeout=40)
+              checks.append({'name':'actual_released_exe_window','passed':True})
+              with sqlite3.connect(db) as c:initial=c.execute('SELECT count(*) FROM papers').fetchone()[0]
+              checks.append({'name':'started_without_seed_papers','passed':initial==0,'records':initial})
+              button=win.child_window(title='联网搜索论文',control_type='Button')
+              button.wait('enabled',timeout=20);button.invoke()
+              stop=time.monotonic()+420
+              while time.monotonic()<stop:
+                  if process.poll() is not None:raise RuntimeError('EXE exited during online search: '+str(process.returncode))
+                  try:
+                      with sqlite3.connect(db) as c:
+                          row=c.execute('SELECT payload FROM runs ORDER BY id DESC LIMIT 1').fetchone()
+                      if row:report=json.loads(row[0]);break
+                  except sqlite3.OperationalError:pass
+                  time.sleep(2)
+              if not report:raise RuntimeError('Online search did not finish within acceptance limit')
+              with sqlite3.connect(db) as c:papers=[json.loads(r[0]) for r in c.execute('SELECT payload FROM papers')]
+              checks.append({'name':'clicked_search_returned_real_papers','passed':bool(papers),'count':len(papers)})
+              checks.append({'name':'AER_source_filter','passed':bool(papers) and all(p['source_id']=='aer' for p in papers)})
+              target=next((p for p in papers if p.get('doi')=='10.1257/aer.20231016'),None)
+              checks.append({'name':'actual_search_contains_known_AER_paper','passed':bool(target and 'Florida Wetlands' in target['title']),'title':target['title'] if target else ''})
+              checks.append({'name':'results_visible_count','passed':report.get('shown',0)>0,'shown':report.get('shown')})
+              time.sleep(2)
+              win.capture_as_image().save(out/'actual_search.png')
+              # Check that the bundled browser opens; do not equate this with CNKI data access.
+              win.child_window(title='知网辅助检索 / 采集当前结果',control_type='Button').invoke()
+              browser=app.window(title_re='知网辅助检索.*');browser.wait('visible',timeout=35);time.sleep(3)
+              checks.append({'name':'bundled_CNKI_browser_window_opens','passed':browser.exists(),'scope':'Window/engine only, not an automatic CNKI query or content verification'})
+              browser.capture_as_image().save(out/'cnki_browser_window.png');browser.close()
+              win.close();process.wait(timeout=30)
+              checks.append({'name':'clean_application_exit','passed':process.returncode==0,'code':process.returncode})
+          except Exception:
+              checks.append({'name':'actual_user_path_error','passed':False,'detail':traceback.format_exc()})
+              try:win.capture_as_image().save(out/'failure.png')
+              except Exception:pass
+          finally:
+              if process.poll() is None:process.terminate()
+              result={'tested_at':dt.datetime.now(dt.timezone.utc).isoformat(),'platform':'Windows Server 2022 x64','release_tag':'paper-radar-desktop-v2.0.0','uses_actual_released_exe':True,'started_without_papers':True,'checks':checks,'search_report':report,'passed':sum(x['passed'] for x in checks),'total':len(checks)}
+              (out/'actual_exe_network_test.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
+              print(json.dumps(result,ensure_ascii=True,indent=2))
+          if any(not c['passed'] for c in checks):raise SystemExit(2)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PaperRadar-actual-EXE-network-test
+          path: user_path_verification/
+          retention-days: 2
