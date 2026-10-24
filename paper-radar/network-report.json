@@ -1,0 +1,66 @@
+{
+  "checked_at": "2026-10-24T11:03:04.644893+00:00",
+  "environment": "GitHub-hosted ubuntu-latest",
+  "passed": 3,
+  "total": 7,
+  "checks": [
+    {
+      "source": "Crossref AER",
+      "url": "https://api.crossref.org/works/10.1257/aer.20231016",
+      "status": 200,
+      "content_verified": true,
+      "bytes": 15718,
+      "snippet": "{\"status\":\"ok\",\"message-type\":\"work\",\"message-version\":\"1.0.0\",\"message\":{\"indexed\":{\"date-parts\":[[2026,8,18]],\"date-time\":\"2026-08-18T02:50:06Z\",\"timestamp\":1787021406626,\"version\":\"build-2736575974\"},\"reference-count\":80,\"publisher\":\"American Economic Association\",\"issue\":\"5\",\"content-domain\":{\"domain\":[],\"crossmark-restriction\":false},\"short-container-title\":[\"American Economic Review\"],\"published-print\":{\"date-parts\":[[2026,5,1]]},\"abstract\":\" We introduce an empirical framework for valuing markets in environmental offsets. Using newly collected data on wetland conservation and offsets, we apply this framework to evaluate a set of decentralized markets in Florida, where land developers purchase offsets from long-lived producers who restore wetlands over time. We find offsets led to substantial private gains from trade, creating $2.4 billion of net surplus from 1995 to 2020 relative to direct conservation. Offset trading also generated new hydrological externalities. A locally differentiated Pigouvian tax would have prevented $1.6 billion of new flood damage while preserving more than two-thirds of the private gains from trade. (JEL D47, D62, H23, Q24, Q54, Q57, R14) \",\"DOI\":\"10.1257\\/aer.20231016\",\"type\":\"journal-article\",\"created\":{\"date-parts\":[[2026,4,30]],\"date-time\":\"2026-04-30T13:45:32Z\",\"timestamp\":1777556732000},\"page\":\"1723-1764\",\"source\":\"Crossref\",\"is-referenced-by-count\":5,\"title\":[\"Conservation Priorities and Environmental Offsets: Markets for Florida Wetlan",
+      "doi": "10.1257/aer.20231016",
+      "title": [
+        "Conservation Priorities and Environmental Offsets: Markets for Florida Wetlands"
+      ]
+    },
+    {
+      "source": "NBER",
+      "url": "https://www.nber.org/papers/w35514",
+      "status": 200,
+      "content_verified": true,
+      "bytes": 94460,
+      "snippet": " \n \n   \n      \n \n /* @see https://github.com/aFarkas/lazysizes#broken-image-symbol */.js img.lazyload:not([src]) { visibility: hidden; }/* @see https://github.com/aFarkas/lazysizes#automatically-setting-the-sizes-attribute */.js img.lazyloaded[data-sizes=auto] { display: block; width: 100%; } \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n  \n\n     Investing in Mothers? The Long-Run Impact of a Universal Child Care Program on Maternal Work and Income | NBER \n     \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n\n    \n     \n     \n    \n     \n     \n     \n     \n\n     \n     \n     \n     \n   \n   \n         \n      Skip to main content\n     \n          \n\n       \n     \n     \n       \n         \n   \n      NBER: National Bureau of Economic Research                                                                          \n   \n \n         \n          \n    \n \n          \n\n\n \n          Subscribe  \n          Media  \n          Open Calls  \n     \n     \n\n\n         \n          \n         \n           \n             \n               \n                  \n               \n             \n           \n              \n       \n       \n\n       \n         \n            \n           \n               \n           \n         \n\n         \n           \n             \n               Search \n               \n               \n                 \n                    \n                 \n               \n             \n           \n         \n\n         \n               \n          \n    \n    \n         \n                \n         \n                           Resear"
+    },
+    {
+      "source": "CNKI Economic Research",
+      "url": "https://jjyj.cbpt.cnki.net/",
+      "status": 200,
+      "content_verified": false,
+      "bytes": 126,
+      "snippet": "         "
+    },
+    {
+      "source": "CNKI Management World",
+      "url": "https://glsj.cbpt.cnki.net/",
+      "status": 200,
+      "content_verified": false,
+      "bytes": 164,
+      "snippet": "         "
+    },
+    {
+      "source": "CNKI World Economy Politics",
+      "url": "https://sjjz.cbpt.cnki.net/",
+      "status": 200,
+      "content_verified": false,
+      "bytes": 129,
+      "snippet": "         "
+    },
+    {
+      "source": "World Economy",
+      "url": "https://sjjj.magtech.com.cn/CN/current",
+      "status": 200,
+      "content_verified": true,
+      "bytes": 47905,
+      "snippet": " \r\n \r\n \r\n 世界经济 \r\n \r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n \r\n \r\n \r\n  \r\n  \r\n  \r\n  \r\n  \r\n  \r\n  \r\n  \r\n \r\n\r\n \r\n\t$(document).ready(function(){\r\n\t\t$(\"title\").text($(\"title\").text().replace(/ ]*>/g,\"\"));\r\n\t});\r\n \r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n \r\n \r\n \r\n \r\n \r\n\r\n   \r\n\r\n\r\n    \r\n\r\n    \r\n   \r\n\r\n \r\n  \r\n \r\n  \r\n\r\n \r\nMathJax = {\r\ntex: {\r\ninlineMath: [['$', '$'], ['\\\\(', '\\\\)']]\r\n},\r\nsvg: {\r\nfontCache: 'global'\r\n}\r\n};\r\n \r\n  \r\n \r\n  \r\n  \r\n \r\n\r\n\r\n \r\nfunction collectArticle(id) {\r\n\tvar url = window.location.href;\r\n\tjQuery.ajax({\r\n\t\turl: $(\"#mag-common-journal-url\").val()+\"/CN/user/addCollectArticle.do\",\r\n\t\tdata: {\r\n\t\t\t\"articleId\": id,\r\n\t\t\t\"url\": url\r\n\t\t},\r\n\t\ttype: \"post\",\r\n\t\tsuccess: function(res) {\r\n\t\t\tif (res == \"true\") {\r\n\t\t\t\tmag_layer({content:\"收藏成功！\"});\r\n\t\t\t} else if (res == \"false\") {\r\n\t\t\t\tmag_layer({content:\"您已经收藏过该篇文章啦！\"});\r\n\t\t\t} else if (res.length > 5) {\r\n\t\t\t\twindow.location.href = $(\"#mag-common-journal-url\").val()+\"/CN/user/userInfo_cn.jsp?url=\" + res;\r\n\t\t\t} else {\r\n\t\t\t\tmag_layer({content:\"收藏失败！\"});\r\n\t\t\t}\r\n\t\t},\r\n\t\terror: function() {\r\n\t\t\tmag_layer({content:\"收藏失败！\"});\r\n\t\t}\r\n\t});\r\n}\r\n\r\n//可视化开始\r\n$(document).ready(function(){\r\n    var arrSpan=$(\"[id^='span_visual_article_']\");\r\n    if(arrSpan && arrSpan.length && arrSpan.length>0 ){\r\n        for(var i=0;i 0){\r\n\t\tmag_ajax({\r\n\t\t\turl:$(\"#mag-common-contextPath\").val()+\"/CN/article/getVolumnInfoForBuy.do?\" + new Date().getTime(),\r\n\t\t\tdata:{volumnId:$(\"#mag-current-volumn-id\").val()},\r\n\t\t\tdataType:\"json\",\r\n\t\t\tsuccess:function(data){\r\n\t\t\t\tif(data.volumn.volumnDownloadCo"
+    },
+    {
+      "source": "CNKI search",
+      "url": "https://kns.cnki.net/kns8s/AdvSearch",
+      "content_verified": false,
+      "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'kns.cnki.net'. (_ssl.c:1081)>"
+    }
+  ]
+}
