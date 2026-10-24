@@ -1,0 +1,134 @@
+name: Paper Radar Desktop Windows release
+on:
+  push:
+    paths:
+      - 'paper-radar-desktop/**'
+      - '.github/workflows/paper-radar-desktop-build.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: paper-radar-desktop-build
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 35
+    env:
+      PYTHONUTF8: '1'
+      QTWEBENGINE_CHROMIUM_FLAGS: '--disable-gpu'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare reproducible source tree and install open-source dependencies
+        shell: pwsh
+        run: |
+          Copy-Item paper-radar/catalog.json paper-radar-desktop/catalog.json
+          Set-Location paper-radar-desktop
+          New-Item -ItemType Directory -Force verification | Out-Null
+          @'
+          PySide6>=6.8,<7
+          requests>=2.32.5,<3
+          beautifulsoup4>=4.13,<5
+          pyinstaller>=6.12,<7
+          '@ | Set-Content requirements.txt -Encoding utf8
+          python -m pip install -r requirements.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m pip freeze | Set-Content verification/installed_packages.txt -Encoding utf8
+      - name: Unit tests (fixtures only, separately labeled)
+        working-directory: paper-radar-desktop
+        shell: python
+        run: |
+          import pathlib, subprocess, sys
+          p=subprocess.run([sys.executable,'-m','unittest','discover','-s','tests','-v'],capture_output=True,text=True,encoding='utf-8')
+          pathlib.Path('verification/unit_tests.txt').write_text(p.stdout+p.stderr,encoding='utf-8')
+          print(p.stdout+p.stderr)
+          sys.exit(p.returncode)
+      - name: Verify actual public records on Windows
+        working-directory: paper-radar-desktop
+        run: python verify_live.py verification
+      - name: Source GUI acceptance with real retrieved papers
+        working-directory: paper-radar-desktop
+        shell: python
+        run: |
+          import os, subprocess, sys
+          subprocess.run([sys.executable,'main.py','--self-test','--report-dir','verification/source_gui','--test-records','verification/live_records.json','--data-dir',os.path.join(os.environ['RUNNER_TEMP'],'radar-source-acceptance')],check=True,timeout=180)
+      - name: Build Windows x64 application including normal browser engine
+        working-directory: paper-radar-desktop
+        shell: pwsh
+        run: |
+          python -m PyInstaller --noconfirm --clean --onedir --windowed --name PaperRadar --add-data 'catalog.json;.' --add-data 'GUIDE.html;.' main.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Launch the frozen EXE and repeat acceptance
+        working-directory: paper-radar-desktop
+        shell: python
+        run: |
+          import os, pathlib, subprocess, sys
+          exe=str(pathlib.Path('dist/PaperRadar/PaperRadar.exe').resolve())
+          subprocess.run([exe,'--self-test','--report-dir',str(pathlib.Path('verification/frozen_gui').resolve()),'--test-records',str(pathlib.Path('verification/live_records.json').resolve()),'--data-dir',os.path.join(os.environ['RUNNER_TEMP'],'radar-exe-acceptance')],check=True,timeout=180)
+      - name: Package executable, full source, licenses and test evidence
+        working-directory: paper-radar-desktop
+        shell: python
+        run: |
+          import hashlib, importlib.metadata as md, json, pathlib, shutil, sys, zipfile
+          root=pathlib.Path.cwd(); out=root/'dist'/'PaperRadar'
+          (out/'licenses').mkdir(exist_ok=True)
+          for package in ['PySide6','PySide6_Essentials','PySide6_Addons','shiboken6','requests','beautifulsoup4','certifi','urllib3','charset-normalizer','idna','pyinstaller']:
+              try:
+                  dist=md.distribution(package)
+                  for f in dist.files or []:
+                      if pathlib.Path(str(f)).name.lower().startswith(('license','copying','notice')):
+                          p=pathlib.Path(dist.locate_file(f))
+                          if p.is_file():
+                              target=out/'licenses'/package/pathlib.Path(str(f)).name
+                              target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(p,target)
+              except md.PackageNotFoundError: pass
+          # Never redistribute host/container font files; application uses installed Windows fonts.
+          for p in out.rglob('*'):
+              if p.is_file() and p.suffix.lower() in ('.ttf','.otf','.woff','.woff2'):p.unlink()
+          notice='Original Paper Radar application code: MIT License. Copyright 2026 Paper Radar contributors.\nPermission is granted, free of charge, to use, copy, modify, distribute and sublicense this code with this notice. THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY.\nThird-party components retain their licenses. Python: PSF; PySide6/Qt: LGPLv3/GPLv3 and component notices; Requests: Apache-2.0; Beautiful Soup: MIT; PyInstaller: GPL with bootloader exception; SQLite: public domain.\nQt libraries are dynamically packaged and may be replaced with compatible modified versions. Full application source accompanies this release. See licenses/ and installed_packages.txt for third-party details.\nhttps://doc.qt.io/qtforpython-6/licenses.html\nhttps://doc.qt.io/qt-6/licensing.html\n'
+          (root/'LICENSE.txt').write_text(notice,encoding='utf-8');(out/'LICENSE.txt').write_text(notice,encoding='utf-8')
+          shutil.copy2(root/'GUIDE.html',out/'使用说明.html')
+          shutil.copytree(root/'verification',out/'verification',dirs_exist_ok=True)
+          readme='Windows 10/11 x64. Extract the entire ZIP, then run PaperRadar/PaperRadar.exe. Keep the _internal folder. No Python installation, API key, institution or hosting account is needed.\nNo sample papers are loaded into the app. verification/ contains explicitly labeled actual network checks. CNKI assisted mode is not a verified anonymous bulk API. No CAPTCHA or TLS checks are bypassed. The EXE is not commercially code-signed; verify source and checksum, never disable security software.\n'
+          (out/'START_HERE.txt').write_text(readme,encoding='utf-8');(root/'README.md').write_text(readme,encoding='utf-8')
+          with zipfile.ZipFile(root/'PaperRadar_Windows_x64.zip','w',zipfile.ZIP_DEFLATED,6) as z:
+              for p in out.rglob('*'):
+                  if p.is_file():z.write(p,p.relative_to(out.parent))
+          with zipfile.ZipFile(root/'PaperRadar_source.zip','w',zipfile.ZIP_DEFLATED,9) as z:
+              for p in root.rglob('*'):
+                  if p.is_file() and not any(x in p.relative_to(root).parts for x in ('build','dist','__pycache__','verification')) and p.suffix not in ('.zip','.pyc'):
+                      z.write(p,p.relative_to(root))
+          hashes={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in [root/'PaperRadar_Windows_x64.zip',root/'PaperRadar_source.zip',out/'PaperRadar.exe']}
+          (root/'SHA256SUMS.txt').write_text('\n'.join(v+'  '+k for k,v in hashes.items())+'\n',encoding='utf-8')
+          (root/'release_manifest.json').write_text(json.dumps({'version':'2.0.0','platform':'Windows x64','hashes':hashes,'exe_bytes':(out/'PaperRadar.exe').stat().st_size,'zip_bytes':(root/'PaperRadar_Windows_x64.zip').stat().st_size},indent=2),encoding='utf-8')
+          print(json.dumps(hashes,indent=2))
+      - name: Publish downloadable release in the existing public project repository
+        working-directory: paper-radar-desktop
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $tag = 'paper-radar-desktop-v2.0.0'
+          $notes = 'Windows desktop app. No Vercel, Python installation, paid API or institutional subscription. Extract the whole archive and run PaperRadar.exe. See the included GUIDE and actual Windows network/EXE test reports. Public evidence coverage is bounded; CNKI interaction remains user-assisted where automatic access fails. Unsigned executable; verify SHA256SUMS.'
+          gh release view $tag --repo $env:GITHUB_REPOSITORY 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag PaperRadar_Windows_x64.zip PaperRadar_source.zip SHA256SUMS.txt release_manifest.json --clobber --repo $env:GITHUB_REPOSITORY
+          } else {
+            gh release create $tag PaperRadar_Windows_x64.zip PaperRadar_source.zip SHA256SUMS.txt release_manifest.json --title 'Paper Radar Desktop 2.0 — Windows x64' --notes $notes --target $env:GITHUB_SHA --repo $env:GITHUB_REPOSITORY
+          }
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PaperRadar-Windows-x64-and-verification
+          path: |
+            paper-radar-desktop/PaperRadar_Windows_x64.zip
+            paper-radar-desktop/PaperRadar_source.zip
+            paper-radar-desktop/SHA256SUMS.txt
+            paper-radar-desktop/release_manifest.json
+            paper-radar-desktop/verification/
+          retention-days: 2
+          compression-level: 0
