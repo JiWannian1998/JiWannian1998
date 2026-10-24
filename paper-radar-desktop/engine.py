@@ -3,6 +3,7 @@ No API keys, logins, LLM calls, subscription services or fabricated popularity s
 """
 from __future__ import annotations
 import calendar, concurrent.futures as cf, csv, hashlib, html, io, json, os, re, sqlite3, threading, time
+from contextlib import contextmanager
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import quote, unquote, urljoin, urlparse
@@ -18,7 +19,7 @@ OFFICIAL={
  'glsj':['https://glsj.cbpt.cnki.net/','https://www.mwm.net.cn/'],
  'sjjj':['https://sjjj.magtech.com.cn/CN/current','https://sjjj.magtech.com.cn/CN/archive'],
  'jjxjk':['https://ccj.pku.edu.cn/journal/Info?jid=96822','https://www.nsd.pku.edu.cn/cbw/jjxjk/qkml/index.htm'],
- 'zggyjj':['https://zggy.cbpt.cnki.net/','https://www.ciejournal.org/'],
+ 'zggyjj':['https://ggyy.cbpt.cnki.net/portal','https://www.ciejournal.org/'],
  'sljj':['https://www.jqte.net/sljjjsjjyj/ch/index.aspx'],
  'shxyj':['https://shxyj.ajcass.com/'],
  'jjdl':['https://www.jjdl.com.cn/CN/current','https://www.jjdl.com.cn/CN/article/showOldVolumn.do'],
@@ -65,7 +66,7 @@ def in_window(s,start,end,overlap=False):
  iv=interval(s);return bool(iv and ((iv[0]<=end and iv[1]>=start) if overlap else (start<=iv[0] and iv[1]<=end)))
 def is_research(title):
  t=text(title)
- if re.search(r'^(front matter|back matter|contents|table of contents|index to|editorial|editor.s report|announcement|erratum|corrigendum|correction|retraction|cover image|issue information|list of referees)\b',t,re.I):return False
+ if re.search(r'^(front matter|back matter|contents|table of contents|index to|editorial|editor.s report|announcement|erratum|corrigendum|correction|retraction|cover image|issue information|list of referees|book reviews?)\b',t,re.I):return False
  if re.search(r'^(目录|封面|编委会|征稿|征订|更正|勘误|致谢)|(?:书评|评介)$',t):return False
  return len(t)>5
 def methods(title,abstract):
@@ -129,8 +130,13 @@ class Store:
    c.execute('CREATE TABLE IF NOT EXISTS cache(key TEXT PRIMARY KEY, ts REAL NOT NULL, payload TEXT NOT NULL)')
    c.execute('CREATE TABLE IF NOT EXISTS prefs(key TEXT PRIMARY KEY, payload TEXT NOT NULL)')
    c.execute('CREATE TABLE IF NOT EXISTS runs(id INTEGER PRIMARY KEY, ts TEXT, payload TEXT)')
+ @contextmanager
  def connect(self):
-  c=sqlite3.connect(self.path,timeout=30);c.execute('PRAGMA journal_mode=WAL');return c
+  connection=sqlite3.connect(self.path,timeout=30)
+  try:
+   connection.execute('PRAGMA journal_mode=WAL')
+   with connection:yield connection
+  finally:connection.close()
  def upsert(self,papers):
   with self.connect() as c:
    for p in papers:c.execute('INSERT INTO papers(id,payload,updated) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload,updated=excluded.updated',(p['id'],json.dumps(p,ensure_ascii=False),stamp()))
@@ -371,7 +377,7 @@ def filter_papers(papers,q):
  return sorted(output,key=key,reverse=True),counts
 def search(catalog,q,store,progress=lambda s:None,on_source=lambda p,r:None,cancel=None):
  cancel=cancel or threading.Event();client=Client(store,cancel,use_cache=q.get('cache',True));end=date.fromisoformat(q.get('end') or date.today().isoformat());start=window_start(end,'1y' if q.get('clock')=='attention' else q.get('window','1y'));selected=[s for s in catalog if s['id'] in q['sources']];papers=[];reports=[]
- def one(src):return chinese(client,src,start,end,progress) if src.get('language')=='zh' else crossref(client,src,start,end,progress)
+ def one(src):return chinese(client,src,start,end,progress) if src.get('language',src.get('lang'))=='zh' else crossref(client,src,start,end,progress)
  try:
   with cf.ThreadPoolExecutor(max_workers=3) as pool:
    jobs={pool.submit(one,s):s for s in selected}
@@ -400,8 +406,14 @@ def export_ris(papers):
   if p.get('doi'):lines+=['DO  - '+p['doi']]
   lines+=['ER  - ','']
  return '\n'.join(lines)
+def catalog_aliases(catalog,chinese_only=False):
+ sources=[s for s in catalog if not chinese_only or s.get('language',s.get('lang'))=='zh']
+ aliases={norm(s['name']):s for s in sources}
+ for s in sources:
+  for a in ALIASES.get(s['id'],[]):aliases.setdefault(norm(a),s)
+ return aliases
 def import_cnki_rows(rows,catalog):
- aliases={norm(a):s for s in catalog for a in [s['name'],*ALIASES.get(s['id'],[])]};output=[];rejected=0
+ aliases=catalog_aliases(catalog,True);output=[];rejected=0
  for row in rows:
   src=aliases.get(norm(row.get('source')));title=text(row.get('title'));u=row.get('url','')
   if not src or not is_research(title) or not safe_url(u):rejected+=1;continue
@@ -428,13 +440,17 @@ def parse_reference_import(content,catalog):
   elif m:key,value=m.groups()
   else:
    m=re.match(r'^(Title|Author|Journal|Year|PubDate|DOI|Link|URL)(?:-(?:题名|作者|刊名|年|出版日期|网址))?\s*[:：]\s*(.*)$',line,re.I)
-   if not m:continue
-   key={'title':'TI','author':'AU','journal':'JO','year':'PY','pubdate':'DA','doi':'DO','link':'UR','url':'UR'}[m[1].lower()];value=m[2]
+   if m:key={'title':'TI','author':'AU','journal':'JO','year':'PY','pubdate':'DA','doi':'DO','link':'UR','url':'UR'}[m[1].lower()];value=m[2]
+   else:
+    m=re.match(r'^(RT|SR|T1|A1|JF|JO|YR|FD|DO|UL)\s+(.+)$',line)
+    if not m:continue
+    key={'RT':'TY','SR':'TY','T1':'TI','A1':'AU','JF':'JO','YR':'PY','FD':'DA','UL':'UR'}.get(m[1],m[1]);value=m[2]
   if key=='TY' and current:records.append(current);current={}
+  if key=='TI' and current.get('TI'):records.append(current);current={}
   if key=='ER':
    if current:records.append(current);current={}
   else:current.setdefault(key,[]).append(value)
- aliases={norm(a):s for s in catalog for a in [s['name'],*ALIASES.get(s['id'],[])]};out=[]
+ aliases=catalog_aliases(catalog);out=[]
  for r in records:
   first=lambda *ks:next((r[k][0] for k in ks if r.get(k)),'');title=first('TI','T1');src=aliases.get(norm(first('JO','JF','T2','JA')))
   if not src or not is_research(title):continue
