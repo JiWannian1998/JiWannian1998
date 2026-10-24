@@ -15,22 +15,28 @@ for d,sid,expected in [('10.1257/aer.20231016','aer','Conservation Priorities'),
  except Exception as e:checks.append({'name':sid+'_known_record','passed':False,'error':str(e)})
 def collect(s):
  try:
-  if s['language']=='en':return E.crossref(client,s,start,end,log,max_pages=1)
+  if s['language']=='en':return E.crossref(client,s,start,end,log,max_pages=15 if s['id']=='nber' else 1)
   if s['id'] in ('sjjj','jjdl','shxyj','glsj','jjxjk'):return E.chinese(client,s,start,end,log,budget=16)
   return [],[{'source_id':s['id'],'source':s['name'],'status':'assisted','retrieved':0,'note':'本轮未自动验证；使用知网正常浏览辅助采集。'}]
  except Exception as e:return [],[{'source_id':s['id'],'source':s['name'],'status':'error','retrieved':0,'note':str(e)}]
 with cf.ThreadPoolExecutor(max_workers=3) as pool:
  for items,reps in pool.map(collect,CAT):papers+=items;reports+=reps
 papers=E.dedup(papers)
-try:reports.append(E.collect_evidence(client,papers,start,end,log,budget=70))
+try:reports.append(E.collect_evidence(client,papers,start,end,log,budget=80))
 except Exception as e:reports.append({'source_id':'attention','status':'error','note':str(e)})
-english=[s for s in CAT if s['language']=='en'];counts={s['id']:sum(p['source_id']==s['id'] for p in papers) for s in CAT}
+# This diagnostic is separate from automatic discovery, and is not inserted into the results.
+try:
+ obj=client.get('https://www.aeaweb.org/research/conservation-offsets-florida-wetlands');ids,ev=E.evidence_page(obj['text'],obj['url'],'AEA研究精选')
+ checks.append({'name':'known_AER_evidence_page_parses','passed':'10.1257/aer.20231016' in ids and ev.get('date')=='2026-06-03','date':ev.get('date'),'linked_dois':sorted(ids),'url':obj['url']})
+except Exception as e:checks.append({'name':'known_AER_evidence_page_parses','passed':False,'error':str(e)})
+english=[s for s in CAT if s['language']=='en'];counts={s['id']:sum(p['source_id']==s['id'] for p in papers) for s in CAT};attention_count=sum(bool(p.get('evidence')) for p in papers)
 checks.append({'name':'all_top5_nber_have_real_records','passed':all(counts[s]>0 for s in E.TOP_IDS),'counts':{s:counts[s] for s in E.TOP_IDS}})
 checks.append({'name':'no_front_matter_or_book_reviews','passed':all(E.is_research(p['title']) for p in papers)})
 checks.append({'name':'unique_identifiers','passed':len({p['id'] for p in papers})==len(papers)})
 checks.append({'name':'all_links_valid_http','passed':all(E.safe_url(p['url']) for p in papers)})
+checks.append({'name':'automatically_discovered_attention_is_nonempty','passed':attention_count>0,'papers_with_evidence':attention_count})
 checks.append({'name':'evidence_has_dates_and_document_links','passed':all(e.get('date') and E.safe_url(e['url']) and e.get('match') for p in papers for e in p.get('evidence',[]))})
-report={'version':E.VERSION,'checked_at':E.stamp(),'os':sys.platform,'window':{'start':str(start),'end':str(end)},'records':len(papers),'counts':counts,'english_sources_with_records':sum(counts[s['id']]>0 for s in english),'english_sources_total':len(english),'papers_with_evidence':sum(bool(p.get('evidence')) for p in papers),'checks':checks,'source_reports':reports,'scope':'Each English source reads at most one 200-record index page in this acceptance run; app supports pagination. Chinese public pages are bounded; browser-assisted CNKI is NOT counted as verified automatic access.'}
+report={'version':E.VERSION,'checked_at':E.stamp(),'os':sys.platform,'window':{'start':str(start),'end':str(end)},'records':len(papers),'counts':counts,'english_sources_with_records':sum(counts[s['id']]>0 for s in english),'english_sources_total':len(english),'papers_with_evidence':attention_count,'checks':checks,'source_reports':reports,'scope':'NBER verifies pagination (up to 15 pages). Other English sources read at most one 200-record index page in this acceptance run; the app supports pagination. Chinese public pages are bounded; browser-assisted CNKI is NOT counted as verified automatic access. The known-AER-evidence diagnostic is not injected into discovery results.'}
 (OUT/'live_report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8');(OUT/'live_records.json').write_text(json.dumps(papers,ensure_ascii=False,indent=2),encoding='utf-8');log(json.dumps({k:v for k,v in report.items() if k!='source_reports'},ensure_ascii=False,indent=2))
-mandatory=checks[0]['passed'] and checks[1]['passed'] and sum(counts[s]>0 for s in E.TOP_IDS)>=4
+mandatory=checks[0]['passed'] and checks[1]['passed'] and sum(counts[s]>0 for s in E.TOP_IDS)>=4 and attention_count>0
 sys.exit(0 if mandatory else 2)
