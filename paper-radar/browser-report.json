@@ -1,13 +1,13 @@
 {
-  "tested_at": "2026-10-24T11:22:43.359126+00:00",
+  "tested_at": "2026-10-24T11:34:30.530843+00:00",
   "uses_real_collected_records": true,
-  "passed": 22,
-  "total": 25,
+  "passed": 28,
+  "total": 28,
   "checks": [
     {
       "name": "real_index_nonempty",
       "passed": true,
-      "detail": "24"
+      "detail": "3713"
     },
     {
       "name": "catalog_has_36_sources",
@@ -21,7 +21,7 @@
     },
     {
       "name": "known_AER_DOI_and_title",
-      "passed": false,
+      "passed": true,
       "detail": ""
     },
     {
@@ -41,7 +41,7 @@
     },
     {
       "name": "browser_loads_real_records",
-      "passed": false,
+      "passed": true,
       "detail": ""
     },
     {
@@ -81,7 +81,22 @@
     },
     {
       "name": "exact_paper_keyword_search",
-      "passed": false,
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "favorites_filter",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CSV_export_has_real_title_and_DOI",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "RIS_export_real_paper",
+      "passed": true,
       "detail": ""
     },
     {
