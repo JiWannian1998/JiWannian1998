@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'paper-radar/collect.py'
+      - 'paper-radar/refresh.py'
       - 'paper-radar/catalog.json'
       - '.github/workflows/paper-radar-refresh.yml'
   workflow_dispatch:
@@ -25,8 +26,15 @@ jobs:
       - name: Install public parser dependencies
         run: pip install 'requests>=2.32,<3' 'beautifulsoup4>=4.12,<5'
       - name: Collect real data and verify bibliographic fields
-        run: python paper-radar/collect.py
-      - name: Persist verified index
+        env:
+          TRIGGER: ${{ github.event_name }}
+        run: |
+          if [ "$TRIGGER" = 'push' ] && [ -s paper-radar/data.json ]; then
+            python paper-radar/refresh.py --reuse-chinese
+          else
+            python paper-radar/refresh.py
+          fi
+      - name: Persist actual index and coverage report
         run: |
           git config user.name 'Paper Radar index'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
