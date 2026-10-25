@@ -1,10 +1,10 @@
 {
-  "checked_at": "2026-10-24T11:34:32.508017+00:00",
+  "checked_at": "2026-10-25T05:03:18.951506+00:00",
   "browser_tests": "success",
-  "release_sha": "687b6a42addcc94b88450ebe9afffbd20d275886",
+  "release_sha": "ac98e5e64f0d1649c068b72d06eb06638f76612c",
   "checks": [
     {
-      "url": "https://rawcdn.githack.com/JiWannian1998/JiWannian1998/687b6a42addcc94b88450ebe9afffbd20d275886/paper-radar/index.html",
+      "url": "https://rawcdn.githack.com/JiWannian1998/JiWannian1998/ac98e5e64f0d1649c068b72d06eb06638f76612c/paper-radar/index.html",
       "valid_site": false,
       "error": "HTTP Error 403: Forbidden"
     }
