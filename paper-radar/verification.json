@@ -1,6 +1,6 @@
 {
   "environment": "GitHub-hosted live public-network collection",
-  "checked_at": "2026-11-03T07:00:34.459993+00:00",
+  "checked_at": "2026-11-04T06:44:03.898565+00:00",
   "sources_with_records": 28,
   "sources_total": 36,
   "counts": {
@@ -10,25 +10,25 @@
     "ecta": 0,
     "restud": 132,
     "nber": 1543,
-    "eg": 30,
-    "jeg": 102,
-    "rs": 146,
+    "eg": 24,
+    "jeg": 104,
+    "rs": 147,
     "jue": 72,
     "jrs": 83,
     "rsue": 88,
     "apsr": 90,
-    "ajps": 72,
-    "jop": 230,
+    "ajps": 73,
+    "jop": 231,
     "bjps": 58,
     "cps": 66,
-    "pa": 35,
+    "pa": 36,
     "asr": 42,
     "ajs": 85,
-    "sf": 219,
+    "sf": 221,
     "esr": 52,
     "io": 54,
-    "isq": 91,
-    "jcr": 60,
+    "isq": 92,
+    "jcr": 61,
     "jpr": 6,
     "is": 24,
     "jjyj": 0,
@@ -105,14 +105,14 @@
     ],
     "eg": [
       {
-        "title": "Change Agency and the Capability Approach: Regional Development and Well-Being on the Edge",
-        "date": "2025-11-02",
-        "url": "https://doi.org/10.1080/00130095.2025.2571094"
+        "title": "A Research Agenda for Economic Geography: Reframing 21st Century Capitalism",
+        "date": "2026-01-02",
+        "url": "https://doi.org/10.1080/00130095.2025.2605146"
       },
       {
-        "title": "Green-Tech Transition Beyond Regional Borders: The Role of Embodied Green Knowledge Flows",
-        "date": "2025-11-02",
-        "url": "https://doi.org/10.1080/00130095.2025.2577307"
+        "title": "Contemporary Economic Geographies: Inspiring, Critical and Plural Perspectives",
+        "date": "2026-01-02",
+        "url": "https://doi.org/10.1080/00130095.2025.2604499"
       }
     ],
     "jeg": [
@@ -380,14 +380,14 @@
         "url": "https://www.jjdl.com.cn/CN/Y2026/V46/I7/272"
       },
       {
-        "title": "评《跨域生态环境风险全过程治理机制研究》",
-        "date": "2026-05-26",
-        "url": "https://www.jjdl.com.cn/CN/Y2026/V46/I5/272"
+        "title": "《中国区域经济学》（北京大学编写组）评介",
+        "date": "2026-06-26",
+        "url": "https://www.jjdl.com.cn/CN/Y2026/V46/I6/271"
       }
     ],
     "sjjjyzz": []
   },
-  "records": 3745,
+  "records": 3749,
   "evidence": {
     "visited": 77,
     "discovered": 77,
@@ -412,7 +412,7 @@
       "scanned": 138,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "qje",
@@ -423,7 +423,7 @@
       "scanned": 58,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "jpe",
@@ -434,7 +434,7 @@
       "scanned": 143,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "ecta",
@@ -445,7 +445,7 @@
       "scanned": 76,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "restud",
@@ -456,7 +456,7 @@
       "scanned": 132,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "nber",
@@ -467,40 +467,40 @@
       "scanned": 1457,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "eg",
       "provider": "Crossref公共索引",
       "url": "https://api.crossref.org/journals/0013-0095/works",
-      "count": 30,
-      "index_total": 30,
-      "scanned": 30,
+      "count": 24,
+      "index_total": 24,
+      "scanned": 24,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "jeg",
       "provider": "Crossref公共索引",
       "url": "https://api.crossref.org/journals/1468-2702/works",
-      "count": 102,
-      "index_total": 102,
-      "scanned": 102,
+      "count": 104,
+      "index_total": 104,
+      "scanned": 104,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "rs",
       "provider": "Crossref公共索引",
       "url": "https://api.crossref.org/journals/0034-3404/works",
-      "count": 146,
-      "index_total": 146,
-      "scanned": 146,
+      "count": 147,
+      "index_total": 147,
+      "scanned": 147,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "jue",
@@ -511,7 +511,7 @@
       "scanned": 63,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "jrs",
@@ -522,7 +522,7 @@
       "scanned": 82,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "rsue",
@@ -533,7 +533,7 @@
       "scanned": 68,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "apsr",
@@ -544,29 +544,29 @@
       "scanned": 87,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "ajps",
       "provider": "Crossref公共索引",
       "url": "https://api.crossref.org/journals/0092-5853/works",
-      "count": 72,
-      "index_total": 72,
-      "scanned": 72,
+      "count": 73,
+      "index_total": 73,
+      "scanned": 73,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "jop",
       "provider": "Crossref公共索引",
       "url": "https://api.crossref.org/journals/0022-3816/works",
-      "count": 230,
-      "index_total": 230,
-      "scanned": 230,
+      "count": 231,
+      "index_total": 231,
+      "scanned": 231,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "bjps",
@@ -577,7 +577,7 @@
       "scanned": 58,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "cps",
@@ -588,18 +588,18 @@
       "scanned": 66,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "pa",
       "provider": "Crossref公共索引",
       "url": "https://api.crossref.org/journals/1047-1987/works",
-      "count": 35,
-      "index_total": 35,
-      "scanned": 35,
+      "count": 36,
+      "index_total": 36,
+      "scanned": 36,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "asr",
@@ -610,7 +610,7 @@
       "scanned": 42,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "ajs",
@@ -621,18 +621,18 @@
       "scanned": 85,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "sf",
       "provider": "Crossref公共索引",
       "url": "https://api.crossref.org/journals/0037-7732/works",
-      "count": 219,
-      "index_total": 219,
-      "scanned": 219,
+      "count": 221,
+      "index_total": 221,
+      "scanned": 221,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "esr",
@@ -643,7 +643,7 @@
       "scanned": 52,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "io",
@@ -654,29 +654,29 @@
       "scanned": 54,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "isq",
       "provider": "Crossref公共索引",
       "url": "https://api.crossref.org/journals/0020-8833/works",
-      "count": 91,
-      "index_total": 91,
-      "scanned": 91,
+      "count": 92,
+      "index_total": 92,
+      "scanned": 92,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "jcr",
       "provider": "Crossref公共索引",
       "url": "https://api.crossref.org/journals/0022-0027/works",
-      "count": 60,
-      "index_total": 60,
-      "scanned": 60,
+      "count": 61,
+      "index_total": 61,
+      "scanned": 61,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "jpr",
@@ -687,7 +687,7 @@
       "scanned": 6,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "is",
@@ -698,7 +698,7 @@
       "scanned": 24,
       "complete_index": true,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "jjyj",
@@ -708,8 +708,8 @@
       "index_total": null,
       "scanned": 0,
       "complete_index": false,
-      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/0577-9154/works?filter=from-pub-date%3A2025-11-02%2Cuntil-pub-date%3A2026-11-03%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/0577-9154/works?filter=from-pub-date%3A2025-11-03%2Cuntil-pub-date%3A2026-11-04%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "glsj",
@@ -719,8 +719,8 @@
       "index_total": null,
       "scanned": 0,
       "complete_index": false,
-      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/1002-5502/works?filter=from-pub-date%3A2025-11-02%2Cuntil-pub-date%3A2026-11-03%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/1002-5502/works?filter=from-pub-date%3A2025-11-03%2Cuntil-pub-date%3A2026-11-04%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "sjjj",
@@ -730,8 +730,8 @@
       "index_total": null,
       "scanned": 0,
       "complete_index": false,
-      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/1002-9621/works?filter=from-pub-date%3A2025-11-02%2Cuntil-pub-date%3A2026-11-03%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/1002-9621/works?filter=from-pub-date%3A2025-11-03%2Cuntil-pub-date%3A2026-11-04%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "jjxjk",
@@ -741,8 +741,8 @@
       "index_total": null,
       "scanned": 0,
       "complete_index": false,
-      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/2095-1086/works?filter=from-pub-date%3A2025-11-02%2Cuntil-pub-date%3A2026-11-03%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/2095-1086/works?filter=from-pub-date%3A2025-11-03%2Cuntil-pub-date%3A2026-11-04%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "zggyjj",
@@ -752,8 +752,8 @@
       "index_total": null,
       "scanned": 0,
       "complete_index": false,
-      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/1006-480X/works?filter=from-pub-date%3A2025-11-02%2Cuntil-pub-date%3A2026-11-03%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/1006-480X/works?filter=from-pub-date%3A2025-11-03%2Cuntil-pub-date%3A2026-11-04%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "sljj",
@@ -763,8 +763,8 @@
       "index_total": null,
       "scanned": 0,
       "complete_index": false,
-      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/1000-3894/works?filter=from-pub-date%3A2025-11-02%2Cuntil-pub-date%3A2026-11-03%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/1000-3894/works?filter=from-pub-date%3A2025-11-03%2Cuntil-pub-date%3A2026-11-04%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "shxyj",
@@ -774,8 +774,8 @@
       "index_total": null,
       "scanned": 0,
       "complete_index": false,
-      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/1002-5936/works?filter=from-pub-date%3A2025-11-02%2Cuntil-pub-date%3A2026-11-03%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/1002-5936/works?filter=from-pub-date%3A2025-11-03%2Cuntil-pub-date%3A2026-11-04%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "jjdl",
@@ -785,8 +785,8 @@
       "index_total": null,
       "scanned": 0,
       "complete_index": false,
-      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/1000-8462/works?filter=from-pub-date%3A2025-11-02%2Cuntil-pub-date%3A2026-11-03%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/1000-8462/works?filter=from-pub-date%3A2025-11-03%2Cuntil-pub-date%3A2026-11-04%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "sjjjyzz",
@@ -796,8 +796,8 @@
       "index_total": null,
       "scanned": 0,
       "complete_index": false,
-      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/1006-9550/works?filter=from-pub-date%3A2025-11-02%2Cuntil-pub-date%3A2026-11-03%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00"
+      "error": "404 Client Error: Not Found for url: https://api.crossref.org/journals/1006-9550/works?filter=from-pub-date%3A2025-11-03%2Cuntil-pub-date%3A2026-11-04%2Ctype%3Ajournal-article&rows=500&cursor=%2A",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00"
     },
     {
       "source_id": "jjyj",
@@ -807,7 +807,7 @@
       "scanned": 2,
       "complete_index": false,
       "error": "https://jjyj.cbpt.cnki.net/portal 500 Server Error: Internal Server Error for url: https://jjyj.cbpt.cnki.net/portal；https://www.erj.cn/ HTTPSConnectionPool(host='www.erj.cn', port=443): Max retries exceeded with url: / (Caused by NewConnectionErr",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00",
       "pages": [],
       "note": "公开页有界采集；不代表完整目录。知网交互搜索可在网站中打开。"
     },
@@ -819,7 +819,7 @@
       "scanned": 2,
       "complete_index": false,
       "error": "https://www.mwm.net.cn/ HTTPSConnectionPool(host='www.mwm.net.cn', port=443): Max retries exceeded with url: / (Caused by ConnectTimeo",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00",
       "pages": [
         {
           "url": "https://glsj.cbpt.cnki.net/portal",
@@ -837,7 +837,7 @@
       "scanned": 34,
       "complete_index": false,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00",
       "pages": [
         {
           "url": "https://sjjj.magtech.com.cn/CN/current",
@@ -870,7 +870,7 @@
       "scanned": 4,
       "complete_index": false,
       "error": "",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00",
       "pages": [
         {
           "url": "https://www.nsd.pku.edu.cn/cbw/jjxjk/qkml/index.htm",
@@ -903,7 +903,7 @@
       "scanned": 2,
       "complete_index": false,
       "error": "https://ggyy.cbpt.cnki.net/portal 500 Server Error: Internal Server Error for url: https://ggyy.cbpt.cnki.net/portal；https://www.ciejournal.org/ HTTPSConnectionPool(host='www.ciejournal.org', port=443): Max retries exceeded with url: / (Caused by SSLError",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00",
       "pages": [],
       "note": "公开页有界采集；不代表完整目录。知网交互搜索可在网站中打开。"
     },
@@ -915,7 +915,7 @@
       "scanned": 2,
       "complete_index": false,
       "error": "https://sljy.cbpt.cnki.net/portal 500 Server Error: Internal Server Error for url: https://sljy.cbpt.cnki.net/portal；https://www.jqte.net/sljjjsjjyj/ch/index.aspx 502 Server Error: Bad Gateway for url: https://www.jqte.net/sljjjsjjyj/ch/index.aspx",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00",
       "pages": [],
       "note": "公开页有界采集；不代表完整目录。知网交互搜索可在网站中打开。"
     },
@@ -927,7 +927,7 @@
       "scanned": 11,
       "complete_index": false,
       "error": "https://shxj.cbpt.cnki.net/portal 500 Server Error: Internal Server Error for url: https://shxj.cbpt.cnki.net/portal",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00",
       "pages": [
         {
           "url": "https://shxyj.ajcass.com/",
@@ -957,10 +957,10 @@
       "provider": "知网公开目录/期刊官网",
       "url": "https://www.jjdl.com.cn/CN/current",
       "count": 3,
-      "scanned": 32,
+      "scanned": 31,
       "complete_index": false,
-      "error": "https://www.jjdl.com.cn/CN/Y2026/V46/I7 500 Server Error:  for url: https://www.jjdl.com.cn/CN/Y2026/V46/I7；https://www.jjdl.com.cn/CN/Y2026/V46/I6 500 Server Error:  for url: https://www.jjdl.com.cn/CN/Y2026/V46/I6；https://www.jjdl.com.cn/CN/Y2025/V45/I10 500 Server Error:  for url: https://www.jjdl.com.cn/CN/Y2025/V45/I10；https://www.jjdl.com.cn/CN/Y2025/V45/I9 500 Server Error:  for url: https://www.jjdl.com.cn/CN/Y2025/V45/I9；https://www.jjdl.com.cn/CN/Y2025/V45/I8 500 Server Error:  for url: https://www.jjdl.com.cn/CN/Y2025/V45/I8",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00",
+      "error": "https://www.jjdl.com.cn/CN/article/showOldVolumn.do HTTPSConnectionPool(host='www.jjdl.com.cn', port=443): Max retries exceeded with url: /CN/article/showOldVolum；https://www.jjdl.com.cn/CN/Y2026/V46/I5/272 500 Server Error:  for url: https://www.jjdl.com.cn/CN/Y2026/V46/I5/272；https://www.jjdl.com.cn/CN/Y2026/V46/I4 500 Server Error:  for url: https://www.jjdl.com.cn/CN/Y2026/V46/I4；https://www.jjdl.com.cn/CN/Y2026/V46/I3 500 Server Error:  for url: https://www.jjdl.com.cn/CN/Y2026/V46/I3；https://www.jjdl.com.cn/CN/Y2026/V46/I2 500 Server Error:  for url: https://www.jjdl.com.cn/CN/Y2026/V46/I2",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00",
       "pages": [
         {
           "url": "https://www.jjdl.com.cn/CN/current",
@@ -973,13 +973,13 @@
           "title": "《海岸带经济与陆海统筹管控：长三角环境胁迫过程与机理》评介"
         },
         {
-          "url": "https://www.jjdl.com.cn/CN/article/showOldVolumn.do",
-          "bytes": 75446,
+          "url": "https://www.jjdl.com.cn/CN/archive_by_issues",
+          "bytes": 66989,
           "title": "经济地理"
         },
         {
-          "url": "https://www.jjdl.com.cn/CN/archive_by_issues",
-          "bytes": 66989,
+          "url": "https://www.jjdl.com.cn/CN/Y2026/V46/I7",
+          "bytes": 155835,
           "title": "经济地理"
         }
       ],
@@ -993,7 +993,7 @@
       "scanned": 2,
       "complete_index": false,
       "error": "https://sjjz.cbpt.cnki.net/portal 500 Server Error: Internal Server Error for url: https://sjjz.cbpt.cnki.net/portal；https://www.iwep.org.cn/cbw/cbw_xsqk/xsqk_sjjjyzzy/ HTTPSConnectionPool(host='www.iwep.org.cn', port=443): Max retries exceeded with url: /cbw/cbw_xsqk/xsqk_sjjjy",
-      "checked_at": "2026-11-03T07:00:34.459993+00:00",
+      "checked_at": "2026-11-04T06:44:03.898565+00:00",
       "pages": [],
       "note": "公开页有界采集；不代表完整目录。知网交互搜索可在网站中打开。"
     }
