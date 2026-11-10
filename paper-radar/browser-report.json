@@ -1,5 +1,5 @@
 {
-  "tested_at": "2026-11-09T07:00:33.810222+00:00",
+  "tested_at": "2026-11-10T07:41:48.832123+00:00",
   "uses_real_collected_records": true,
   "passed": 28,
   "total": 28,
@@ -7,7 +7,7 @@
     {
       "name": "real_index_nonempty",
       "passed": true,
-      "detail": "3750"
+      "detail": "3772"
     },
     {
       "name": "catalog_has_36_sources",
